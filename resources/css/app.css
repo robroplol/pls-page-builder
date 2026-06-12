@@ -1,0 +1,1154 @@
+@import 'tailwindcss';
+@config '../../tailwind.config.js';
+@import '../../vendor/livewire/flux/dist/flux.css';
+
+@source '../views';
+@source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
+@source '../../vendor/livewire/flux-pro/stubs/**/*.blade.php';
+@source '../../vendor/livewire/flux/stubs/**/*.blade.php';
+
+
+
+/* @theme {
+    --font-sans: 'Instrument Sans', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+
+    --color-zinc-50: #fafafa;
+    --color-zinc-100: #f5f5f5;
+    --color-zinc-200: #e5e5e5;
+    --color-zinc-300: #d4d4d4;
+    --color-zinc-400: #a3a3a3;
+    --color-zinc-500: #737373;
+    --color-zinc-600: #525252;
+    --color-zinc-700: #404040;
+    --color-zinc-800: #262626;
+    --color-zinc-900: #171717;
+    --color-zinc-950: #0a0a0a;
+
+    --color-accent: var(--color-neutral-800);
+    --color-accent-content: var(--color-neutral-800);
+    --color-accent-foreground: var(--color-white);
+} */
+
+@custom-variant dark (&:where(.dark, .dark *));
+@custom-variant dark (&:where([data-theme=dark], [data-theme=dark] *));
+
+@layer base {
+
+    *,
+    ::after,
+    ::before,
+    ::backdrop,
+    ::file-selector-button {
+        border-color: var(--color-gray-200, currentColor);
+    }
+}
+
+[data-flux-field]:not(ui-radio, ui-checkbox) {
+    @apply grid gap-2;
+}
+
+[data-flux-label] {
+    @apply  !mb-0 !leading-tight;
+}
+
+input:focus[data-flux-control],
+textarea:focus[data-flux-control],
+select:focus[data-flux-control] {
+    @apply outline-hidden ring-2 ring-accent ring-offset-2 ring-offset-accent-foreground;
+}
+
+
+body {
+  font-family: Arial, sans-serif;
+}
+
+/* Common Component Styles */
+.component-btn {
+  transition: all 0.2s ease;
+}
+
+.component-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+/* Preview Frame */
+.preview-frame {
+    min-width: 1024px;
+  height: 100%;
+  border: none;
+  display: block;
+}
+
+/* Code Editor */
+.code-editor {
+  font-family: monospace;
+  min-height: 300px;
+  resize: vertical;
+}
+
+/* Block Styles */
+.block-highlight:hover {
+  outline: 2px solid #115e6e;
+}
+
+.block-item {
+  transition: background-color 0.2s ease;
+}
+
+.block-item[data-collapsed="true"] {
+  background-color: #f9fafb;
+}
+
+.block-item[data-collapsed="true"]:hover {
+  background-color: #f3f4f6;
+}
+
+.block-item[data-collapsed="true"] .block-content {
+  display: none;
+}
+
+/* Sortable */
+.sortable-ghost {
+  opacity: 0.5;
+  background-color: #f3f4f6 !important;
+  border: 2px dashed #9ca3af !important;
+}
+
+.sortable-handle {
+  cursor: move;
+}
+
+/* Tab Navigation */
+.tab-active {
+  border-bottom: 2px solid #115e6e;
+  color: #115e6e;
+}
+
+.tab-inactive {
+  border-bottom: 2px solid transparent;
+  color: #555;
+}
+
+/* Collapse/Expand Button */
+.collapse-toggle svg {
+  transition: transform 0.2s ease;
+}
+
+.block-item[data-collapsed="true"] .collapse-toggle svg {
+  transform: rotate(-90deg);
+}
+
+/* Rich Text Editor Styles */
+.ql-container {
+  min-height: 100px;
+  max-height: 300px;
+  overflow-y: auto;
+}
+
+.editor-container {
+  margin-bottom: 10px;
+}
+
+.ql-toolbar {
+  border-top-left-radius: 0.25rem;
+  border-top-right-radius: 0.25rem;
+  background-color: #f9fafb;
+}
+
+.ql-container {
+  border-bottom-left-radius: 0.25rem;
+  border-bottom-right-radius: 0.25rem;
+}
+
+/* Card Editor Specific Styles */
+
+/* Card Tab Navigation */
+.card-tabs {
+  display: flex;
+  border-bottom: 1px solid #e5e7eb;
+  margin-bottom: 1rem;
+}
+
+.card-tab {
+  padding: 0.5rem 1rem;
+  font-weight: 500;
+  color: #6b7280;
+  cursor: pointer;
+  border-bottom: 2px solid transparent;
+  transition: all 0.2s ease;
+}
+
+.card-tab:hover {
+  color: #4b5563;
+}
+
+.card-tab-active {
+  color: #115e6e;
+  border-bottom: 2px solid #115e6e;
+}
+
+/* Card color options */
+.color-option {
+  transition: all 0.2s ease;
+  border: 2px solid transparent;
+}
+
+.color-option:hover {
+  background-color: #f9fafb;
+}
+
+.color-option.selected {
+  border-color: #115e6e;
+  background-color: #f0fdfa;
+}
+
+/* Card layout options */
+.layout-option {
+  transition: all 0.2s ease;
+  border: 2px solid transparent;
+}
+
+.layout-option:hover {
+  background-color: #f9fafb;
+}
+
+.layout-option.layout-selected {
+  border-color: #115e6e;
+  background-color: #f0fdfa;
+}
+
+/* Card type options */
+.card-type-option {
+  transition: all 0.2s ease;
+  border: 2px solid transparent;
+}
+
+.card-type-option:hover {
+  background-color: #f9fafb;
+}
+
+.card-type-option.card-type-selected {
+  border-color: #115e6e;
+  background-color: #f0fdfa;
+}
+
+/* Card item container styles */
+.cards-container {
+  max-height: 400px;
+  overflow-y: auto;
+  padding: 0.5rem;
+}
+
+.card-item {
+  transition: all 0.2s ease;
+  border: 1px solid #e2e8f0;
+}
+
+.card-item:hover {
+  background-color: #f3f4f6;
+}
+
+/* Card controls styling */
+.card-item .move-card {
+  cursor: move;
+  opacity: 0.7;
+  transition: opacity 0.2s;
+}
+
+.card-item:hover .move-card {
+  opacity: 1;
+}
+
+.card-item .delete-card {
+  opacity: 0.7;
+  transition: opacity 0.2s;
+}
+
+.card-item:hover .delete-card {
+  opacity: 1;
+}
+
+/* Ghost styles for dragging */
+.cards-container .sortable-ghost {
+  opacity: 0.7;
+  background-color: #e5e7eb;
+  border: 1px dashed #9ca3af;
+}
+
+/* Add Card button styling */
+.add-card-btn {
+  transition: all 0.2s ease;
+}
+
+.add-card-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+/* Editor height adjustment for card content */
+.card-item .ql-container {
+  min-height: 80px;
+  max-height: 200px;
+}
+
+/* Accordion styles */
+.accordion-controls .accordion__content {
+  max-height: 0;
+  transition: max-height 0.3s ease-out;
+}
+
+.accordion-controls .accordion__toggle {
+  transition: transform 0.3s ease;
+}
+
+/* Tab System styles */
+.tabs-white__content {
+  min-height: 200px;
+}
+
+/* Block move buttons */
+.move-block {
+  cursor: move;
+  opacity: 0.7;
+  transition: opacity 0.2s;
+}
+
+.block-item:hover .move-block {
+  opacity: 1;
+}
+
+/* Delete block buttons */
+.delete-block {
+  opacity: 0.7;
+  transition: opacity 0.2s;
+}
+
+.block-item:hover .delete-block {
+  opacity: 1;
+}
+
+/* Collapsed block styling */
+.collapsed-dragging {
+  min-height: 60px;
+  opacity: 0.8;
+  background-color: #f3f4f6;
+}
+
+.block-item[data-collapsed="true"] .move-block {
+  opacity: 1;
+  background-color: #e5e7eb;
+  padding: 4px;
+  border-radius: 4px;
+}
+
+.block-item[data-collapsed="true"] .move-block:hover {
+  background-color: #d1d5db;
+}
+
+.block-item[data-collapsed="true"] {
+  background-color: #f9fafb;
+  border-left: 3px solid #e5e7eb;
+}
+
+/* Accordion Tab Navigation */
+.accordion-tabs {
+  display: flex;
+  border-bottom: 1px solid #e5e7eb;
+  margin-bottom: 1rem;
+}
+
+.accordion-tab {
+  padding: 0.5rem 1rem;
+  font-weight: 500;
+  color: #6b7280;
+  cursor: pointer;
+  border-bottom: 2px solid transparent;
+  transition: all 0.2s ease;
+}
+
+.accordion-tab:hover {
+  color: #4b5563;
+}
+
+.accordion-tab-active {
+  color: #115e6e;
+  border-bottom: 2px solid #115e6e;
+}
+
+/* Accordion panels container */
+.accordion-panels-container {
+  max-height: 400px;
+  overflow-y: auto;
+  padding: 0.5rem;
+}
+
+.accordion-panel {
+  transition: all 0.2s ease;
+  border: 1px solid #e2e8f0;
+}
+
+.accordion-panel:hover {
+  background-color: #f3f4f6;
+}
+
+/* Panel controls styling */
+.accordion-panel .move-panel {
+  cursor: move;
+  opacity: 0.7;
+  transition: opacity 0.2s;
+}
+
+.accordion-panel:hover .move-panel {
+  opacity: 1;
+}
+
+.accordion-panel .delete-panel {
+  opacity: 0.7;
+  transition: opacity 0.2s;
+}
+
+.accordion-panel:hover .delete-panel {
+  opacity: 1;
+}
+
+/* Ghost styles for dragging */
+.accordion-panels-container .sortable-ghost {
+  opacity: 0.7;
+  background-color: #e5e7eb;
+  border: 1px dashed #9ca3af;
+}
+
+/* Add Panel button styling */
+.add-panel-btn {
+  transition: all 0.2s ease;
+}
+
+.add-panel-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+/* Editor height adjustment for panel content */
+.accordion-panel .ql-container {
+  min-height: 80px;
+  max-height: 200px;
+}
+
+/* Accordion type options */
+.accordion-type-option {
+  transition: all 0.2s ease;
+  border: 2px solid transparent;
+}
+
+.accordion-type-option:hover {
+  background-color: #f9fafb;
+}
+
+.accordion-type-option.accordion-type-selected {
+  border-color: #115e6e;
+  background-color: #f0fdfa;
+}
+
+/* Timeline Tab Navigation */
+.timeline-tabs {
+  display: flex;
+  border-bottom: 1px solid #e5e7eb;
+  margin-bottom: 1rem;
+}
+
+.timeline-tab {
+  padding: 0.5rem 1rem;
+  font-weight: 500;
+  color: #6b7280;
+  cursor: pointer;
+  border-bottom: 2px solid transparent;
+  transition: all 0.2s ease;
+}
+
+.timeline-tab:hover {
+  color: #4b5563;
+}
+
+.timeline-tab-active {
+  color: #115e6e;
+  border-bottom: 2px solid #115e6e;
+}
+
+/* Timeline type options */
+.timeline-type-option {
+  transition: all 0.2s ease;
+  border: 2px solid transparent;
+}
+
+.timeline-type-option:hover {
+  background-color: #f9fafb;
+}
+
+.timeline-type-option.timeline-type-selected {
+  border-color: #115e6e;
+  background-color: #f0fdfa;
+}
+
+/* Timeline style options */
+.timeline-style-option {
+  transition: all 0.2s ease;
+  border: 2px solid transparent;
+}
+
+.timeline-style-option:hover {
+  background-color: #f9fafb;
+}
+
+.timeline-style-option.timeline-style-selected {
+  border-color: #115e6e;
+  background-color: #f0fdfa;
+}
+
+/* Timeline items container */
+.timeline-items-container {
+  max-height: 400px;
+  overflow-y: auto;
+  padding: 0.5rem;
+}
+
+.timeline-item {
+  transition: all 0.2s ease;
+  border: 1px solid #e2e8f0;
+}
+
+.timeline-item:hover {
+  background-color: #f3f4f6;
+}
+
+/* Timeline controls styling */
+.timeline-item .move-timeline-item {
+  cursor: move;
+  opacity: 0.7;
+  transition: opacity 0.2s;
+}
+
+.timeline-item:hover .move-timeline-item {
+  opacity: 1;
+}
+
+.timeline-item .delete-timeline-item {
+  opacity: 0.7;
+  transition: opacity 0.2s;
+}
+
+.timeline-item:hover .delete-timeline-item {
+  opacity: 1;
+}
+
+/* Child items styling */
+.timeline-child-items {
+  max-height: 150px;
+  overflow-y: auto;
+}
+
+.timeline-child-item {
+  margin-bottom: 0.5rem;
+}
+
+.timeline-child-item .delete-child-item {
+  opacity: 0.7;
+  transition: opacity 0.2s;
+}
+
+.timeline-child-item:hover .delete-child-item {
+  opacity: 1;
+}
+
+/* Timeline cards styling */
+.timeline-cards {
+  max-height: 200px;
+  overflow-y: auto;
+}
+
+.timeline-card {
+  transition: all 0.2s ease;
+}
+
+.timeline-card:hover {
+  background-color: #e5e7eb !important;
+}
+
+.timeline-card .move-timeline-card {
+  cursor: move;
+  opacity: 0.7;
+  transition: opacity 0.2s;
+}
+
+.timeline-card:hover .move-timeline-card {
+  opacity: 1;
+}
+
+.timeline-card .delete-timeline-card {
+  opacity: 0.7;
+  transition: opacity 0.2s;
+}
+
+.timeline-card:hover .delete-timeline-card {
+  opacity: 1;
+}
+
+/* Timeline cards editor size */
+.timeline-card .ql-container {
+  min-height: 60px;
+  max-height: 120px;
+}
+
+/* Ghost styles for dragging */
+.timeline-items-container .sortable-ghost {
+  opacity: 0.7;
+  background-color: #e5e7eb;
+  border: 1px dashed #9ca3af;
+}
+
+.timeline-child-items .sortable-ghost,
+.timeline-cards .sortable-ghost {
+  opacity: 0.7;
+  background-color: #e5e7eb;
+  border: 1px dashed #9ca3af;
+}
+
+/* Add buttons styling */
+.add-timeline-item,
+.add-child-item,
+.add-timeline-card {
+  transition: all 0.2s ease;
+}
+
+.add-timeline-item:hover,
+.add-child-item:hover,
+.add-timeline-card:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+/* Timeline Tab Navigation */
+.timeline-tabs {
+  display: flex;
+  border-bottom: 1px solid #e5e7eb;
+  margin-bottom: 1rem;
+}
+
+.timeline-tab {
+  padding: 0.5rem 1rem;
+  font-weight: 500;
+  color: #6b7280;
+  cursor: pointer;
+  border-bottom: 2px solid transparent;
+  transition: all 0.2s ease;
+}
+
+.timeline-tab:hover {
+  color: #4b5563;
+}
+
+.timeline-tab-active {
+  color: #115e6e;
+  border-bottom: 2px solid #115e6e;
+}
+
+/* Timeline type options */
+.timeline-type-option {
+  transition: all 0.2s ease;
+  border: 2px solid transparent;
+}
+
+.timeline-type-option:hover {
+  background-color: #f9fafb;
+}
+
+.timeline-type-option.timeline-type-selected {
+  border-color: #115e6e;
+  background-color: #f0fdfa;
+}
+
+/* Timeline items container */
+.timeline-items-container {
+  max-height: 400px;
+  overflow-y: auto;
+  padding: 0.5rem;
+}
+
+.timeline-item {
+  transition: all 0.2s ease;
+  border: 1px solid #e2e8f0;
+}
+
+.timeline-item:hover {
+  background-color: #f3f4f6;
+}
+
+/* Timeline controls styling */
+.timeline-item .move-timeline-item {
+  cursor: move;
+  opacity: 0.7;
+  transition: opacity 0.2s;
+}
+
+.timeline-item:hover .move-timeline-item {
+  opacity: 1;
+}
+
+.timeline-item .delete-timeline-item {
+  opacity: 0.7;
+  transition: opacity 0.2s;
+}
+
+.timeline-item:hover .delete-timeline-item {
+  opacity: 1;
+}
+
+/* Timeline cards styling */
+.timeline-cards {
+  max-height: 200px;
+  overflow-y: auto;
+}
+
+.timeline-card {
+  transition: all 0.2s ease;
+}
+
+.timeline-card:hover {
+  background-color: #e5e7eb !important;
+}
+
+.timeline-card .move-timeline-card {
+  cursor: move;
+  opacity: 0.7;
+  transition: opacity 0.2s;
+}
+
+.timeline-card:hover .move-timeline-card {
+  opacity: 1;
+}
+
+.timeline-card .delete-timeline-card {
+  opacity: 0.7;
+  transition: opacity 0.2s;
+}
+
+.timeline-card:hover .delete-timeline-card {
+  opacity: 1;
+}
+
+/* Timeline cards editor size */
+.timeline-card .ql-container {
+  min-height: 60px;
+  max-height: 120px;
+}
+
+/* Ghost styles for dragging */
+.timeline-items-container .sortable-ghost {
+  opacity: 0.7;
+  background-color: #e5e7eb;
+  border: 1px dashed #9ca3af;
+}
+
+.timeline-cards .sortable-ghost {
+  opacity: 0.7;
+  background-color: #e5e7eb;
+  border: 1px dashed #9ca3af;
+}
+
+/* Add buttons styling */
+.add-timeline-item,
+.add-timeline-card {
+  transition: all 0.2s ease;
+}
+
+.add-timeline-item:hover,
+.add-timeline-card:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+/* Tabs Tab Navigation */
+.tabs-tabs {
+  display: flex;
+  border-bottom: 1px solid #e5e7eb;
+  margin-bottom: 1rem;
+}
+
+.tabs-tab {
+  padding: 0.5rem 1rem;
+  font-weight: 500;
+  color: #6b7280;
+  cursor: pointer;
+  border-bottom: 2px solid transparent;
+  transition: all 0.2s ease;
+}
+
+.tabs-tab:hover {
+  color: #4b5563;
+}
+
+.tabs-tab-active {
+  color: #115e6e;
+  border-bottom: 2px solid #115e6e;
+}
+
+/* Tabs container */
+.tabs-container {
+  max-height: 400px;
+  overflow-y: auto;
+  padding: 0.5rem;
+}
+
+.tab-panel {
+  transition: all 0.2s ease;
+  border: 1px solid #e2e8f0;
+}
+
+.tab-panel:hover {
+  background-color: #f3f4f6;
+}
+
+/* Tab controls styling */
+.tab-panel .move-tab {
+  cursor: move;
+  opacity: 0.7;
+  transition: opacity 0.2s;
+}
+
+.tab-panel:hover .move-tab {
+  opacity: 1;
+}
+
+.tab-panel .delete-tab {
+  opacity: 0.7;
+  transition: opacity 0.2s;
+}
+
+.tab-panel:hover .delete-tab {
+  opacity: 1;
+}
+
+/* Ghost styles for dragging */
+.tabs-container .sortable-ghost {
+  opacity: 0.7;
+  background-color: #e5e7eb;
+  border: 1px dashed #9ca3af;
+}
+
+/* Add Tab button styling */
+.add-tab-btn {
+  transition: all 0.2s ease;
+}
+
+.add-tab-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+/* Editor height adjustment for tab content */
+.tab-panel .ql-container {
+  min-height: 80px;
+  max-height: 200px;
+}
+
+/* Table Tab Navigation */
+.table-tabs {
+  display: flex;
+  border-bottom: 1px solid #e5e7eb;
+  margin-bottom: 1rem;
+}
+
+.table-tab {
+  padding: 0.5rem 1rem;
+  font-weight: 500;
+  color: #6b7280;
+  cursor: pointer;
+  border-bottom: 2px solid transparent;
+  transition: all 0.2s ease;
+}
+
+.table-tab:hover {
+  color: #4b5563;
+}
+
+.table-tab-active {
+  color: #115e6e;
+  border-bottom: 2px solid #115e6e;
+}
+
+/* Table column options */
+.table-cols-option {
+  transition: all 0.2s ease;
+  border: 2px solid transparent;
+}
+
+.table-cols-option:hover {
+  background-color: #f9fafb;
+}
+
+.table-cols-option.table-cols-selected {
+  border-color: #115e6e;
+  background-color: #f0fdfa;
+}
+
+/* Table rows container */
+.table-rows-container {
+  max-height: 400px;
+  overflow-y: auto;
+  padding: 0.5rem;
+}
+
+.table-row {
+  transition: all 0.2s ease;
+  border: 1px solid #e2e8f0;
+}
+
+.table-row:hover {
+  background-color: #f3f4f6;
+}
+
+/* Row controls styling */
+.table-row .move-row {
+  cursor: move;
+  opacity: 0.7;
+  transition: opacity 0.2s;
+}
+
+.table-row:hover .move-row {
+  opacity: 1;
+}
+
+.table-row .delete-row {
+  opacity: 0.7;
+  transition: opacity 0.2s;
+}
+
+.table-row:hover .delete-row {
+  opacity: 1;
+}
+
+/* Ghost styles for dragging */
+.table-rows-container .sortable-ghost {
+  opacity: 0.7;
+  background-color: #e5e7eb;
+  border: 1px dashed #9ca3af;
+}
+
+/* Add Row button styling */
+.add-row-btn {
+  transition: all 0.2s ease;
+}
+
+.add-row-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+/* Table headers */
+.table-headers {
+  margin-bottom: 1rem;
+}
+
+/* Video Tab Navigation */
+.video-tabs {
+  display: flex;
+  border-bottom: 1px solid #e5e7eb;
+  margin-bottom: 1rem;
+}
+
+.video-tab {
+  padding: 0.5rem 1rem;
+  font-weight: 500;
+  color: #6b7280;
+  cursor: pointer;
+  border-bottom: 2px solid transparent;
+  transition: all 0.2s ease;
+}
+
+.video-tab:hover {
+  color: #4b5563;
+}
+
+.video-tab-active {
+  color: #115e6e;
+  border-bottom: 2px solid #115e6e;
+}
+
+/* Video type options */
+.video-type-option {
+  transition: all 0.2s ease;
+  border: 2px solid transparent;
+}
+
+.video-type-option:hover {
+  background-color: #f9fafb;
+}
+
+.video-type-option.video-type-selected {
+  border-color: #115e6e;
+  background-color: #f0fdfa;
+}
+
+/* Video container for previews */
+.video-container {
+  position: relative;
+  padding-bottom: 56.25%; /* 16:9 Aspect Ratio */
+  height: 0;
+  overflow: hidden;
+  width: 100%;
+  background-color: #000;
+}
+
+.video-container iframe {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  border: 0;
+}
+
+/* Image Tab Navigation */
+.image-tabs {
+  display: flex;
+  border-bottom: 1px solid #e5e7eb;
+  margin-bottom: 1rem;
+}
+
+.image-tab {
+  padding: 0.5rem 1rem;
+  font-weight: 500;
+  color: #6b7280;
+  cursor: pointer;
+  border-bottom: 2px solid transparent;
+  transition: all 0.2s ease;
+}
+
+.image-tab:hover {
+  color: #4b5563;
+}
+
+.image-tab-active {
+  color: #115e6e;
+  border-bottom: 2px solid #115e6e;
+}
+
+/* Image align options */
+.image-align-option {
+  transition: all 0.2s ease;
+  border: 2px solid transparent;
+}
+
+.image-align-option:hover {
+  background-color: #f9fafb;
+}
+
+.image-align-option.image-align-selected {
+  border-color: #115e6e;
+  background-color: #f0fdfa;
+}
+
+/* Independent scrolling containers */
+.h-[800px] {
+  height: 800px;
+}
+
+/* Ensure scrollbars only appear when needed */
+.overflow-y-auto {
+  overflow-y: auto;
+}
+
+/* Ensure blocks container can scroll within its parent */
+#blocks-container {
+  max-height: calc(100% - 50px);  /* Leave some space for the tabs */
+}
+
+/* Make sure the sortable blocks area can expand and scroll */
+#sortable-blocks {
+  min-height: 100px;
+  height: auto;
+}
+
+/* Make the component toggle button have a nice transition */
+#toggle-components svg {
+  transition: transform 0.3s ease;
+}
+
+/* Independent scrolling improvements */
+html, body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden;
+}
+
+body {
+  overflow-y: auto; /* Allow the overall page to scroll if needed */
+}
+
+.h-screen {
+  height: 100vh;
+}
+
+/* Fix for the preview iframe */
+.preview-frame {
+  width: 100%;
+  height: 100%;
+  border: none;
+  display: block;
+  min-height: 600px; /* Ensure it has a good minimum height */
+}
+
+/* Ensure the blocks editor area scrolls correctly */
+#blocks-container {
+  overflow-y: auto;
+  max-height: none; /* Remove the previous max-height constraint */
+}
+
+/* Make sure sortable blocks can grow within the scrollable container */
+#sortable-blocks {
+  min-height: 100px;
+}
+
+/* Add some padding at the bottom of the scrollable area */
+#sortable-blocks:after {
+  content: "";
+  display: block;
+  height: 50px;
+}
+
+
+button, .block-highlight h3, #sortable-blocks h4, #sortable-blocks label, #sortable-blocks span {
+  color: #091d20;
+}
+
+input, h2, p, textarea {
+  @apply text-black-teal;
+}
+
+.rich-text-editor {
+  background-color: #ffffff
+}
+
+a[data-current="data-current"]{
+  @apply text-black-teal;
+}
+
+a[data-current="data-current"] > div {
+  @apply font-bold;
+}
+
+a[data-flux-sidebar-brand=""] div {
+  @apply text-white;
+}
+ui-sidebar-toggle svg {
+  @apply text-white;
+}
+
+button#save-page {
+  @apply bg-ada-orange text-white hover:bg-dark-gray;
+}
+
+/* \[:where(&)\]:size-4 {
+    @apply size-4;
+} */
