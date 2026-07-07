@@ -3,7 +3,6 @@
 namespace Livewire\Features\SupportMorphAwareBladeCompilation;
 
 use Illuminate\Support\Arr;
-use Illuminate\Support\Facades\Blade;
 use Livewire\ComponentHook;
 use Livewire\Livewire;
 
@@ -33,6 +32,8 @@ class SupportMorphAwareBladeCompilation extends ComponentHook
 
     public static function registerPrecompilers()
     {
+        $compiler = app('blade.compiler');
+
         $directives = [
             '@if' => '@endif',
             '@unless' => '@endunless',
@@ -48,8 +49,8 @@ class SupportMorphAwareBladeCompilation extends ComponentHook
             '@for' => '@endfor',
         ];
 
-        Blade::precompiler(function ($entire) use ($directives) {
-            $conditions = \Livewire\invade(app('blade.compiler'))->conditions;
+        $compiler->precompiler(function ($entire) use ($compiler, $directives) {
+            $conditions = \Livewire\invade($compiler)->conditions;
 
             foreach (array_keys($conditions) as $conditionalDirective) {
                 $directives['@'.$conditionalDirective] = '@end'.$conditionalDirective;
@@ -121,9 +122,16 @@ class SupportMorphAwareBladeCompilation extends ComponentHook
                 && str($match[0])->endsWith(')')
                 && ! static::hasEvenNumberOfParentheses($match[0])
             ) {
-                if (($after = str($template)->after($match[0])->toString()) === $template) {
+                // Use position-based approach to find the text after the current match,
+                // rather than searching for the match string (which could find an earlier
+                // occurrence if the same pattern appears multiple times in the template)...
+                $afterPosition = $matchPosition + strlen($match[0]);
+
+                if ($afterPosition >= strlen($template)) {
                     break;
                 }
+
+                $after = substr($template, $afterPosition);
 
                 $rest = str($after)->before(')');
 
@@ -173,7 +181,7 @@ class SupportMorphAwareBladeCompilation extends ComponentHook
         if (static::$shouldInjectLoopMarkers && static::isLoop($found)) {
             $prefix .= '<?php \Livewire\Features\SupportCompiledWireKeys\SupportCompiledWireKeys::openLoop(); ?>';
 
-            $suffix .= '<?php \Livewire\Features\SupportCompiledWireKeys\SupportCompiledWireKeys::startLoop($loop->index); ?>';
+            $suffix .= '<?php \Livewire\Features\SupportCompiledWireKeys\SupportCompiledWireKeys::startLoopIteration(); ?>';
         }
 
         if ($prefix === '' && $suffix === '') {
@@ -311,8 +319,7 @@ class SupportMorphAwareBladeCompilation extends ComponentHook
         $loopDirectives = [
             'foreach',
             'forelse',
-            // temp disabling because of "missing $loop" error
-            // 'for',
+            'for',
             'while',
         ];
 
@@ -327,7 +334,7 @@ class SupportMorphAwareBladeCompilation extends ComponentHook
             'endforeach',
             // This `endforelse` should NOT be included here, but it is left here for documentation purposes. The close of a `@forelse` loop is handled by the `@empty` directive...
             // 'endforelse',
-            // 'endfor',
+            'endfor',
             'endwhile',
         ];
 

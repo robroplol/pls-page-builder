@@ -1,4 +1,4 @@
-@blaze
+@blaze(fold: true)
 
 @props([
     'accent' => true,
@@ -61,7 +61,7 @@ $iconAttributes = Flux::attributesAfter('icon:', $attributes, [
         {{ $icon }}
     <?php endif; ?>
 
-    @if (isset($label) || $slot->isNotEmpty())
-        <span>{{ $label ?? $slot }}</span>
-    @endif
+    <?php if ($slot->isNotEmpty() || isset($label)): ?>
+        <span>{{ $slot->isNotEmpty() ? $slot : $label }}</span>
+    <?php endif; ?>
 </ui-radio>

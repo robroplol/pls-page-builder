@@ -1,4 +1,9 @@
-@blaze
+@blaze(fold: true, memo: true)
+
+@props([
+    'iconVariant' => 'mini',
+    'size' => null,
+])
 
 @php
 $attributes = $attributes->merge([
@@ -13,5 +18,5 @@ $attributes = $attributes->merge([
     :$attributes
     :size="$size === 'sm' || $size === 'xs' ? 'xs' : 'sm'"
 >
-    <flux:icon.chevron-down variant="micro" />
+    <flux:icon.chevron-down :variant="$iconVariant" />
 </flux:button>

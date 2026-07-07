@@ -5,6 +5,7 @@ namespace Livewire\Mechanisms\HandleRequests;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Route;
 use Livewire\Features\SupportScriptsAndAssets\SupportScriptsAndAssets;
+use Livewire\Features\SupportReactiveProps\SupportReactiveProps;
 use Livewire\Mechanisms\HandleRequests\EndpointResolver;
 use Livewire\Exceptions\PayloadTooLargeException;
 use Livewire\Exceptions\TooManyComponentsException;
@@ -22,10 +23,10 @@ class HandleRequests extends Mechanism
         // Register the default route immediately (before routes files load)
         // so it's positioned before any catch-all routes.
         if (! $this->updateRoute && ! $this->updateRouteExists()) {
-            app($this::class)->setUpdateRoute(function ($handle) {
-                return Route::post(EndpointResolver::updatePath(), $handle)
-                    ->middleware('web')
-                    ->name('default.livewire.update');
+            app($this::class)->setUpdateRoute(function ($handle, $path) {
+                return Route::post($path, $handle)
+                    ->middleware(['web', RequireLivewireHeaders::class])
+                    ->name('default-livewire.update');
             });
         }
 
@@ -49,9 +50,7 @@ class HandleRequests extends Mechanism
         // In this case, find the route from the router.
         $route = $this->updateRoute ?? $this->findUpdateRoute();
 
-        return (string) str(
-            route($route->getName(), [], false)
-        )->start('/');
+        return (string) str(app('url')->toRoute($route, [], false))->start('/');
     }
 
     protected function findUpdateRoute()
@@ -65,7 +64,7 @@ class HandleRequests extends Mechanism
         foreach (Route::getRoutes()->getRoutes() as $route) {
             if (str($route->getName())->endsWith('livewire.update')) {
                 // If it's the default route, save it but keep looking for a custom one
-                if ($route->getName() === 'default.livewire.update') {
+                if ($route->getName() === 'default-livewire.update') {
                     $defaultRoute = $route;
                     continue;
                 }
@@ -91,7 +90,21 @@ class HandleRequests extends Mechanism
 
     function setUpdateRoute($callback)
     {
-        $route = $callback([self::class, 'handleUpdate']);
+        $route = $callback([self::class, 'handleUpdate'], EndpointResolver::updatePath());
+
+        // Ensure the route includes the `web` middleware group.
+        // Without it, CSRF protection is lost entirely on the update endpoint.
+        // Note: we use middleware() (not gatherMiddleware()) to avoid polluting
+        // the route's computed middleware cache before it's fully configured.
+        if (! in_array('web', $route->middleware())) {
+            $route->middleware('web');
+        }
+
+        // Ensure the header guard middleware is always present, even on custom routes.
+        // Only append if its not exists on current middleware stack
+        if (! in_array(RequireLivewireHeaders::class, $route->middleware())) {
+            $route->middleware(RequireLivewireHeaders::class);
+        }
 
         // Append `livewire.update` to the existing name, if any.
         if (! str($route->getName())->endsWith('livewire.update')) {
@@ -124,6 +137,14 @@ class HandleRequests extends Mechanism
 
     function handleUpdate()
     {
+        // When a custom update route is registered, reject requests that arrive
+        // via the default route. This prevents attackers from bypassing middleware
+        // (e.g. auth, tenant scoping) added to the custom route.
+        if (request()->route()?->getName() === 'default-livewire.update'
+            && $this->findUpdateRoute()?->getName() !== 'default-livewire.update') {
+            abort(404);
+        }
+
         // Check payload size limit...
         $maxSize = config('livewire.payload.max_size');
 
@@ -135,7 +156,21 @@ class HandleRequests extends Mechanism
             }
         }
 
-        $requestPayload = request(key: 'components', default: []);
+        $requestPayload = request('components');
+
+        if (! is_array($requestPayload) || empty($requestPayload)) {
+            abort(404);
+        }
+
+        foreach ($requestPayload as $component) {
+            if (! is_array($component)
+                || ! is_string($component['snapshot'] ?? null)
+                || ! is_array($component['updates'] ?? null)
+                || ! is_array($component['calls'] ?? null)
+            ) {
+                abort(404);
+            }
+        }
 
         // Check max components limit...
         $maxComponents = config('livewire.payload.max_components');
@@ -155,10 +190,29 @@ class HandleRequests extends Mechanism
             $updates = $componentPayload['updates'];
             $calls = $componentPayload['calls'];
 
-            [ $snapshot, $effects ] = app('livewire')->update($snapshot, $updates, $calls);
+            // If this is a reactive child whose props didn't change,
+            // skip its entire lifecycle (hydrate, render, dehydrate)...
+            if (empty($updates) && SupportReactiveProps::shouldSkipUpdate($snapshot, $calls)) {
+                $componentResponses[] = [
+                    'skip' => true,
+                    'id' => $snapshot['memo']['id'],
+                ];
+
+                continue;
+            }
+
+            try {
+                [ $snapshot, $effects ] = app('livewire')->update($snapshot, $updates, $calls);
+            } catch (\TypeError $e) {
+                report($e);
+
+                if (config('app.debug')) throw $e;
+
+                abort(419);
+            }
 
             $componentResponses[] = [
-                'snapshot' => json_encode($snapshot),
+                'snapshot' => json_encode($snapshot, JSON_THROW_ON_ERROR),
                 'effects' => $effects,
             ];
         }
