@@ -19,6 +19,9 @@ jobs:
           php-version: '8.4'
           extensions: mbstring, bcmath, pdo, pdo_mysql
 
+      - name: Clear vendor directory
+        run: rm -rf vendor
+
       - name: Install Composer dependencies
         run: composer install --no-dev --optimize-autoloader
 
