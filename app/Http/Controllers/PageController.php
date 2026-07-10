@@ -12,6 +12,7 @@ class PageController extends Controller
     public function index(): View
     {
         $pages = Page::with('user')
+            ->where('user_id', auth()->id())
             ->latest()
             ->paginate(15);
 
